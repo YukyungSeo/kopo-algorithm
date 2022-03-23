@@ -1,13 +1,6 @@
 package kr.ac.kopo.week02_Implementation;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Scanner;
-
-// 1. roots의 node들 내에서 현재 node와 근처에 있는 node들 가져오기
-// 2. 근처에 있는 node들에게 현재 node를 자식으로 추가하기
-// 3. root에 연결된 node 개수가 4인지 확인
-// 4. 4개가 있으면 그 중에서 가장 큰 값이 정답 ->  반환
 
 /*
 
@@ -15,6 +8,15 @@ import java.util.Scanner;
 1 2 3
 5 4 3
 2 3 4
+
+16
+
+3 5
+5 1 1 1 1
+5 5 1 1 1
+5 1 1 1 1
+
+20
 
  */
 public class G_TetrominoMain {
@@ -54,61 +56,87 @@ public class G_TetrominoMain {
 }
 
 class SolutionG {
-	
-	int[][] map;
+
+	private int[][] map;
 
 	void solution(int[][] map) {
 
 		this.map = map;
-		
+
 		// 각 max 값을 찾아 넣는다.
-		ArrayList<Integer> max = new ArrayList<Integer>();
-		for (int x = 0; x < map.length; x++) {
-			for (int y = 0; y < map[x].length; y++) {
-				max.add(tetro(x, y));
+		int max = 0;
+		for (int row = 0; row < map.length; row++) {
+			for (int col = 0; col < map[row].length; col++) {
+				int tmp = otherTetro(row, col, 4, ' ');
+				if (max < tmp)
+					max = tmp;
+//				System.out.print(tmp + " ");
 			}
+//			System.out.println();
+		}
+
+		for (int row = 0; row < map.length - 1; row++) {
+			for (int col = 0; col < map[row].length - 1; col++) {
+				int tmp = threeWayTetro(row, col);
+				if (max < tmp)
+					max = tmp;
+//				System.out.print(tmp + " ");
+			}
+//			System.out.println();
+		}
+
+//		max = stepByStepTetro(1, 0, 4, ' ');
+//		max = threeWayTetro(1, 1);
+
+		System.out.println(max);
+	}
+
+	private int threeWayTetro(int row, int col) {
+		int m0 = 0, m1 = 0, m2 = 0, m3 = 0;
+
+		if (row > 0)
+			m0 = this.map[row - 1][col];
+		if (row < map.length - 1)
+			m1 = this.map[row + 1][col];
+		if (col > 0)
+			m2 = this.map[row][col - 1];
+		if (col < map[row].length - 1)
+			m3 = this.map[row][col + 1];
+
+		int min0 = m0 < m1 ? m0 : m1;
+		int min1 = m2 < m3 ? m2 : m3;
+
+		int min = min0 < min1 ? min0 : min1;
+
+		return this.map[row][col] + m0 + m1 + m2 + m3 - min;
+	}
+
+	private int otherTetro(int row, int col, int num, char dir) {
+
+		if (num == 0)
+			return 0;
+		else {
+			int m0 = 0, m1 = 0, m2 = 0, m3 = 0;
+
+			if (dir != '북' && row > 0)
+				m0 = otherTetro(row - 1, col, num - 1, '남'); // 북
+			if (dir != '남' && row < map.length - 1)
+				m1 = otherTetro(row + 1, col, num - 1, '북'); // 남
+			if (dir != '서' && col > 0)
+				m2 = otherTetro(row, col - 1, num - 1, '동'); // 서
+			if (dir != '동' && col < map[row].length - 1)
+				m3 = otherTetro(row, col + 1, num - 1, '서'); // 동
+
+			int max01 = m0 > m1 ? m0 : m1;
+			int max02 = m2 > m3 ? m2 : m3;
+
+			int max = (max01 > max02 ? max01 : max02) + map[row][col];
+
+//			if (num == 2)
+//				System.out.printf("num : %d, row : %d, col : %d, max : %d\n", num, row, col, max);
+
+			return max;
 		}
 	}
 
-	private int tetro(int x, int y) {
-		
-		ArrayList<Point> list = this.returnMaxDir(x, y);
-		return y;
-	}
-
-	private ArrayList<Point> returnMaxDir(int x, int y) {
-		ArrayList<Point> list = new ArrayList<Point>();
-		int max = this.map[x][y];
-		
-		
-		if(this.map[x-1][y] == this.map[x+1][y]) {
-			list.add(new Point(x-1, y));
-			list.add(new Point(x+1, y));
-		} else {
-			list.add(this.map[x-1][y] > this.map[x+1][y] ? new Point(x-1, y) : new Point(x+1, y));
-		}
-		
-		if(this.map[x][y-1] == this.map[x][y+1]) {
-			list.add(new Point(x, y-1));
-			list.add(new Point(x, y+1));
-		} else {
-			list.add(this.map[x][y-1] > this.map[x][y+1] ? new Point(x, y-1) : new Point(x, y-1));
-		}
-		
-		
-		return null;
-	}
-	
-	
-}
-
-class Point {
-	int x;
-	int y;
-	int value;
-
-	Point(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
 }
