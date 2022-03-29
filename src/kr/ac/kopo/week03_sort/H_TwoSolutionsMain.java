@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Scanner;
 
-// - -> + 정렬
-// 하나씩 더하다가 줄어들던 절대값이 커지면 저장 & break
-// 저장된 값중 절댓값이 제일 작은 값 정보 반환
 public class H_TwoSolutionsMain {
 
 	public static void main(String[] args) {
@@ -14,15 +11,16 @@ public class H_TwoSolutionsMain {
 		Scanner sc = new Scanner(System.in);
 		int num = Integer.parseInt(sc.nextLine());
 
-		ArrayList<Integer> arr = new ArrayList<>();
+		ArrayList<Element> arr = new ArrayList<>();
 		String[] inputStr = sc.nextLine().split(" ");
 		for (int i = 0; i < num; i++) {
-			arr.add(Integer.parseInt(inputStr[i]));
+			int v = Integer.parseInt(inputStr[i]);
+			arr.add(new Element(Math.abs(v), v));
 		}
 
 		// debugging - arr
-//		for (int a : arr) {
-//			System.out.print(a + " ");
+//		for (Element a : arr) {
+//			System.out.print(a.getRealValue() + " ");
 //		}
 
 		SolutionH solution = new SolutionH();
@@ -33,45 +31,72 @@ public class H_TwoSolutionsMain {
 }
 
 class SolutionH {
-	public void solution(ArrayList<Integer> input) {
+	public void solution(ArrayList<Element> input) {
 
 		input.sort(Comparator.naturalOrder());
 
 		// debugging - input
-//		System.out.println(input.toString());
-
-		ArrayList<Node> arr = new ArrayList<Node>();
-		for (int i = 0; i < input.size()-1; i++) {
-			int x = input.get(i);
-			int gap = Integer.MAX_VALUE;
-			Node newNode = new Node(gap, -1, -1);
-
-			for (int j = i + 1; j < input.size(); j++) {
-				int y = input.get(j);
-				int newGap = Math.abs(x + y);
-//				System.out.printf("gap : %3d\t x : %3d\t y : %3d\n", newGap, input.get(i), input.get(j));
-				
-				if (gap > newGap) {
-					gap = newGap;
-					newNode.setGap(gap);
-					newNode.setX(x);
-					newNode.setY(y);
-				} else {
-					break;
-				}
-			}
-
-			arr.add(newNode);
-		}
-
-		// debugging - arr
-//		for (Node node : arr) {
-//			System.out.println(node.toString());
+//		for (Element e : input) {
+//			System.out.print(e.getRealValue() + " ");
 //		}
 
+		ArrayList<Node> arr = new ArrayList<Node>();
+		for (int i = 1; i < input.size(); i++) {
+			int x = input.get(i - 1).getRealValue();
+			int y = input.get(i).getRealValue();
+			int gap = Math.abs(x + y);
+
+			arr.add(new Node(gap, x, y));
+		}
+
 		arr.sort(Comparator.naturalOrder());
-		System.out.println(arr.get(0).getX() + " " + arr.get(0).getY());
+		int x = arr.get(0).getX();
+		int y = arr.get(0).getY();
+		System.out.println(x < y ? x + " " + y : y + " " + x);
 	}
+}
+
+class Element implements Comparable<Element> {
+	private int absValue;
+	private int realValue;
+
+	public Element() {
+		super();
+	}
+
+	public Element(int absValue, int realValue) {
+		super();
+		this.absValue = absValue;
+		this.realValue = realValue;
+	}
+
+	public int getAbsValue() {
+		return absValue;
+	}
+
+	public void setAbsValue(int absValue) {
+		this.absValue = absValue;
+	}
+
+	public int getRealValue() {
+		return realValue;
+	}
+
+	public void setRealValue(int realValue) {
+		this.realValue = realValue;
+	}
+
+	@Override
+	public int compareTo(Element o) {
+		// TODO Auto-generated method stub
+		return this.absValue - o.absValue;
+	}
+
+	@Override
+	public String toString() {
+		return "Element [absValue=" + absValue + ", realValue=" + realValue + "]";
+	}
+
 }
 
 class Node implements Comparable<Node> {
