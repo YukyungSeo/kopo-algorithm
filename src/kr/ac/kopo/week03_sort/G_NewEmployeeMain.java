@@ -1,10 +1,8 @@
 package kr.ac.kopo.week03_sort;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Scanner;
-import java.util.Set;
 
 public class G_NewEmployeeMain {
 
@@ -15,12 +13,12 @@ public class G_NewEmployeeMain {
 		for (int i = 0; i < testcase; i++) {
 			int num = Integer.parseInt(sc.nextLine());
 
-			Map<Integer, Integer> map = new HashMap<>();
+			ArrayList<Interviewer> input = new ArrayList<>();
 			for (int j = 0; j < num; j++) {
 				String[] inputStr = sc.nextLine().split(" ");
-				map.put(Integer.parseInt(inputStr[0]), Integer.parseInt(inputStr[1]));
+				input.add(new Interviewer(Integer.parseInt(inputStr[0]), Integer.parseInt(inputStr[1])));
 			}
-			
+
 			// debugging - map
 //			Set<Map.Entry<Integer, Integer>> set = map.entrySet(); 
 //			for (Entry<Integer, Integer> entry : set) {
@@ -28,7 +26,7 @@ public class G_NewEmployeeMain {
 //			}
 
 			SolutionG solution = new SolutionG();
-			solution.solution(map);
+			solution.solution(input);
 
 		}
 
@@ -37,26 +35,65 @@ public class G_NewEmployeeMain {
 }
 
 class SolutionG {
-	public void solution(Map<Integer, Integer> map) {
+	public void solution(ArrayList<Interviewer> input) {
 
-		Map<Integer, Integer> pass = new HashMap<>();
-		pass.put(1, map.get(1));
+		input.sort(Comparator.naturalOrder());
 
-		for (int i = 2; i <= map.size(); i++){
-			int rank = map.get(i);
-			Set<Map.Entry<Integer, Integer>> passSet = pass.entrySet();
-			boolean isPass = true;
-			for (Entry<Integer, Integer> entry : passSet) {
-				if (rank > entry.getValue()) {
-					isPass = false;
-					break;
-				}
-			}
+		ArrayList<Integer> arr = new ArrayList<>();
 
-			if (isPass)
-				pass.put(i, rank);
+		int rank = input.get(0).getInterviewRank();
+		arr.add(input.get(0).getInterviewRank());
+
+		for (int i = 1; i < input.size(); i++) {
+			int interviewRank = input.get(i).getInterviewRank();
+			if (interviewRank < rank && arr.get(arr.size() - 1) > interviewRank)
+				arr.add(interviewRank);
 		}
 
-		System.out.println(pass.size());
+		// debugging - arr
+//		System.out.println(arr.toString());
+
+		System.out.println(arr.size());
 	}
+}
+
+class Interviewer implements Comparable<Interviewer> {
+	private int paperExamRank;
+	private int interviewRank;
+
+	public Interviewer() {
+		super();
+	}
+
+	public Interviewer(int paperExamRank, int interviewRank) {
+		super();
+		this.paperExamRank = paperExamRank;
+		this.interviewRank = interviewRank;
+	}
+
+	public int getPaperExamRank() {
+		return paperExamRank;
+	}
+
+	public void setPaperExamRank(int paperExamRank) {
+		this.paperExamRank = paperExamRank;
+	}
+
+	public int getInterviewRank() {
+		return interviewRank;
+	}
+
+	public void setInterviewRank(int interviewRank) {
+		this.interviewRank = interviewRank;
+	}
+
+	public int compareTo(Interviewer o) {
+		return this.paperExamRank - o.paperExamRank;
+	}
+
+	@Override
+	public String toString() {
+		return "Interviewer [paperExamRank=" + paperExamRank + ", interviewRank=" + interviewRank + "]\n";
+	}
+
 }
