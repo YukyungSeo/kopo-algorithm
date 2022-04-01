@@ -4,22 +4,20 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Scanner;
 
-public class F_ConferenceRoomAllocationMain {
+public class F_MeetingRoomAllocationMain {
 	public static void main(String[] args) {
 
 		Scanner sc = new Scanner(System.in);
 		int num = Integer.parseInt(sc.nextLine());
 
-		ArrayList<Room> input = new ArrayList<>();
+		ArrayList<Meeting> input = new ArrayList<>();
 		for (int i = 0; i < num; i++) {
 			String[] inputStr = sc.nextLine().split(" ");
-			input.add(new Room(Integer.parseInt(inputStr[0]), Integer.parseInt(inputStr[1])));
+			input.add(new Meeting(Integer.parseInt(inputStr[0]), Integer.parseInt(inputStr[1])));
 		}
 
 		// debugging - input
-		for (Room r : input) {
-			System.out.print(r.toString());
-		}
+//		System.out.print(input.toString());
 
 		SolutionF solution = new SolutionF();
 		solution.solution(input);
@@ -29,7 +27,7 @@ public class F_ConferenceRoomAllocationMain {
 }
 
 class SolutionF {
-	public void solution(ArrayList<Room> input) {
+	public void solution(ArrayList<Meeting> input) {
 
 		input.sort(Comparator.naturalOrder());
 
@@ -38,15 +36,15 @@ class SolutionF {
 	}
 }
 
-class Room implements Comparable<Room> {
+class Meeting implements Comparable<Meeting> {
 	private int start;
 	private int end;
 
-	public Room() {
+	public Meeting() {
 		super();
 	}
 
-	public Room(int start, int end) {
+	public Meeting(int start, int end) {
 		super();
 		this.start = start;
 		this.end = end;
@@ -69,14 +67,13 @@ class Room implements Comparable<Room> {
 	}
 
 	@Override
-	public int compareTo(Room o) {
-		// TODO Auto-generated method stub
+	public int compareTo(Meeting o) {
 		return this.start - o.start;
 	}
 
 	@Override
 	public String toString() {
-		return "Room [start=" + start + ", end=" + end + "]\n";
+		return "Meeting [start=" + start + ", end=" + end + "]\n";
 	}
 
 }
